@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "792628639524",
+    "project_id": "awatch-b9183",
+    "storage_bucket": "awatch-b9183.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792628639524:android:cdb4453878ffd2f8f4a5b1",
+        "android_client_info": {
+          "package_name": "id.rain.awatch.awatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792628639524-0ebfkqo3nb4q9bjopdjc4mj72fg0m01v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAusOfqRE0-d_sUMZGBIQDPPxwETpoptrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792628639524-0ebfkqo3nb4q9bjopdjc4mj72fg0m01v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
