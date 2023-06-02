@@ -1,155 +1,171 @@
+import 'package:awatch/ScreenPage/ProgressItem.dart';
+import 'package:awatch/Utilities/FirestoreSystem.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'UserPost.dart';
 
 class FeedDetail extends StatefulWidget {
-  List<UserPost> userPost;
-  int idx;
+  String proyekId;
+  String nama;
 
-  FeedDetail({Key? key, required this.userPost, required this.idx})
-      : super(key: key);
+  FeedDetail({Key? key, required this.proyekId, required this.nama}) : super(key: key);
 
   @override
   State<FeedDetail> createState() => _FeedDetailState();
 }
 
 class _FeedDetailState extends State<FeedDetail> {
-  Widget buttons = Container(
-      padding: EdgeInsets.only(top: 13, bottom: 13),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
-          Icon(
-            Icons.thumb_up,
-            size: 21,
-          ),
-          Icon(
-            Icons.comment,
-            size: 21,
-          ),
-          Icon(
-            Icons.share,
-            size: 21,
-          ),
-        ],
-      ));
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            leading: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-              ),
-            ),
-            title: Text(
-              widget.userPost.elementAt(widget.idx).name,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            ),
+        home: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepOrangeAccent,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
           ),
-          body: Container(
-            decoration: const BoxDecoration(color: Colors.white),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    decoration: const BoxDecoration(color: Colors.white),
-                    padding: EdgeInsets.all(13),
-                    width: double.infinity,
-                    constraints:
-                        const BoxConstraints(maxHeight: double.infinity),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        title: Text(
+          widget.nama,
+          style: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: GestureDetector(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+                flex: 7,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    StreamBuilder(
+                      stream:
+                          FirestoreSystem.readProgress(docId: widget.proyekId),
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.separated(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (BuildContext, index) {
+                              var data = snapshot.data!.docs[index];
+                              return GestureDetector(
+                                child: ProgressItem(nama: data['nama']),
+                                onTap: () async {
+                                  print("nama : ${data['nama']}");
+                                  print("id : ${data.id}");
+                                },
+                              );
+                            },
+                            separatorBuilder: (BuildContext, index) {
+                              return Divider(
+                                height: 1,
+                              );
+                            },
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
+                  ],
+                )),
+            Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Flexible(
+                        flex: 5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            //Image
-                            Container(
-                              padding: const EdgeInsets.all(3),
-                              margin: const EdgeInsets.only(right: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  image: DecorationImage(
-                                    image: NetworkImage(widget.userPost
-                                        .elementAt(widget.idx)
-                                        .img),
-                                    fit: BoxFit.cover,
-                                  )),
-                              height: 55,
-                              width: 55,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(150, 48),
+                                      primary: Colors.white,
+                                      elevation: 3,
+                                      backgroundColor: Colors.deepOrangeAccent),
+                                  child: Text("Lihat Foto"),
+                                )
+                              ],
                             ),
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  //username id
-                                  Row(
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.all(3),
-                                          child: Text(
-                                            widget.userPost
-                                                .elementAt(widget.idx)
-                                                .name,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          )),
-                                    ],
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    child: Text(
-                                      "@" +
-                                          widget.userPost
-                                              .elementAt(widget.idx)
-                                              .username,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(150, 48),
+                                      primary: Colors.white,
+                                      elevation: 3,
+                                      backgroundColor: Colors.deepOrangeAccent),
+                                  child: Text("Proyek Selesai"),
+                                ),
+                              ],
+                            )
+                          ],
+                        )),
+                    Flexible(
+                        flex: 5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(150, 48),
+                                      primary: Colors.white,
+                                      elevation: 3,
+                                      backgroundColor: Colors.deepOrangeAccent),
+                                  child: Text("Upload Foto"),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(150, 48),
+                                      primary: Colors.deepOrangeAccent,
+                                      elevation: 3,
+                                      backgroundColor: Colors.white),
+                                  child: Text("Update Proyek"),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Tambah Progress",
+                                  style: TextStyle(
+                                      backgroundColor: Colors.redAccent),
+                                )
+                              ],
                             ),
                           ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 21),
-                          child: Text(
-                            widget.userPost.elementAt(widget.idx).post,
-                            softWrap: true,
-                            style: TextStyle(fontSize: 17),
-                          ),
-                        ),
-                      ],
-                    )),
-                Divider(
-                  height: 1,
-                ),
-                buttons,
-                Divider(
-                  height: 1,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Back"))
-              ],
-            ),
-          )),
-    );
+                        ))
+                  ],
+                ))
+          ],
+        ),
+      ),
+    ));
   }
 }

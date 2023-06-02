@@ -56,8 +56,8 @@ class _LoginPageState extends State<LoginPage> {
             controller: usernameController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-                color: Colors.black,
-                // backgroundColor:
+              color: Colors.black,
+              // backgroundColor:
             ),
             decoration: const InputDecoration(
                 contentPadding: EdgeInsets.only(top: 14.0),
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
 
           AuthService service = AuthService(FirebaseAuth.instance);
           final message =
-          await service.signIn(email: username, password: password);
+              await service.signIn(email: username, password: password);
           final FirebaseAuth auth = FirebaseAuth.instance;
           final cUser = auth.currentUser;
           final uid = cUser?.uid;
@@ -211,8 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ],
-            )
-        ),
+            )),
       ),
     );
   }

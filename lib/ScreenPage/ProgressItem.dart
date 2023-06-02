@@ -1,53 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'UserPost.dart';
 
-class StaticFeedItem extends StatefulWidget {
+class ProgressItem extends StatefulWidget {
   String nama;
 
-  StaticFeedItem({Key? key, required this.nama})
-      : super(key: key);
+  ProgressItem({Key? key, required this.nama}) : super(key: key);
 
   @override
-  State<StaticFeedItem> createState() => _StaticFeedItemState();
+  State<ProgressItem> createState() => _ProgressItemState();
 }
 
-class _StaticFeedItemState extends State<StaticFeedItem> {
-  int _counter = 0;
-
-  void counter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  Widget buttons = Container(
-      padding: EdgeInsets.only(top: 13),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
-          Icon(
-            Icons.thumb_up,
-            size: 20,
-          ),
-          Icon(
-            Icons.comment,
-            size: 20,
-          ),
-          Icon(
-            Icons.share,
-            size: 20,
-          ),
-        ],
-      ));
-
-  Widget divider = const Divider(
-    thickness: 1.05,
-    height: 1,
-    color: Colors.grey,
-  );
-
+class _ProgressItemState extends State<ProgressItem> {
   @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return Container(
         decoration: const BoxDecoration(color: Colors.white),
         padding: EdgeInsets.all(13),
@@ -73,7 +39,7 @@ class _StaticFeedItemState extends State<StaticFeedItem> {
                         flex: 7,
                       ),
                       Expanded(
-                        flex: 1,
+                          flex: 1,
                           child: Container(
                             decoration: BoxDecoration(
                               // borderRadius: Radius.circular(20),
