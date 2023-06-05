@@ -11,18 +11,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Utilities/AuthServices.dart';
 import 'AddFeed.dart';
 import 'FeedDetail.dart';
-import 'HistoryPage.dart';
 import 'StaticFeedItem.dart';
 import 'UserPost.dart';
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-class HomePage extends StatefulWidget {
+class HistoryPage extends StatefulWidget {
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HistoryPageState extends State<HistoryPage> {
   SharedPreferences? prefs;
   bool? log;
 
@@ -43,33 +42,18 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: Colors.deepOrangeAccent,
           title: const Text(
-            "Awatch",
+            "Riwayat",
             style: TextStyle(fontSize: 20),
           ),
-          // title: Text(pageTitle.elementAt(_selectedIndex),
-          //   style: TextStyle(color: Colors.black),),
-          actions: <Widget>[
-            TextButton(
-              // icon: const Icon(
-              //   Icons.settings,
-              //   color: Colors.black,
-              // ),
-              onPressed: () async {
-                AuthService service = AuthService(FirebaseAuth.instance);
-                prefs?.setBool('login', true);
-                // print(service.checkUid().toString());
-                service.logOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              },
-              child: Text(
-                'Logout',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            )
-          ],
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepOrangeAccent,
@@ -87,26 +71,9 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             SizedBox(height: 20),
-            Container(
-              padding: EdgeInsets.only(right: 20),
-              child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HistoryPage()));
-                  },
-                  child: Text('Riwayat Proyek'),
-                  style: TextButton.styleFrom(
-                      fixedSize: const Size(150, 48),
-                      primary: Colors.white,
-                      backgroundColor: Colors.deepOrangeAccent)
-              ),
-            ),
             SizedBox(height: 20),
             StreamBuilder(
-              stream: FirestoreSystem.readProyek(),
+              stream: FirestoreSystem.readProyekDone(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   return ListView.separated(

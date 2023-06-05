@@ -36,7 +36,13 @@ class FirestoreSystem {
   static Stream<QuerySnapshot> readProyek() {
     CollectionReference notesItemCollection = _Collection;
 
-    return notesItemCollection.snapshots();
+    return notesItemCollection.where('status', isEqualTo: 0).snapshots();
+  }
+
+  static Stream<QuerySnapshot> readProyekDone() {
+    CollectionReference notesItemCollection = _Collection;
+
+    return notesItemCollection.where('status', isEqualTo: 1).snapshots();
   }
 
   static Stream<QuerySnapshot> readProgress({required String docId}) {
@@ -46,24 +52,69 @@ class FirestoreSystem {
     return notesItemCollection.snapshots();
   }
 
+  static Future<Response> addProgress(
+      {required String nama,
+      required String status,
+      required String docId}) async {
+    Response response = Response();
+    DocumentReference documentReference =
+        _Collection.doc(docId).collection('progress').doc();
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "nama": nama,
+      "status": status
+    };
+
+    var result = await documentReference.set(data).whenComplete(() {
+      response.code = 200;
+      response.message = "Sucessfully add progress to database";
+    }).catchError((e) {
+      response.code = 500;
+      response.message = e;
+    });
+    return response;
+  }
+
+  static Future<Response> updateProgress(
+      {required String nama,
+      required String status,
+      required String docId,
+      required String progId}) async {
+    Response response = Response();
+    DocumentReference documentReference =
+        _Collection.doc(docId).collection('progress').doc(progId);
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "nama": nama,
+      "status": status
+    };
+
+    var result = await documentReference.set(data).whenComplete(() {
+      response.code = 200;
+      response.message = "Sucessfully update progress to database";
+    }).catchError((e) {
+      response.code = 500;
+      response.message = e;
+    });
+    return response;
+  }
+
   static Future<Response> updateProyek({
-    required String name,
-    required String position,
-    required String contactno,
+    required String nama,
+    required int status,
     required String docId,
   }) async {
     Response response = Response();
     DocumentReference documentReferencer = _Collection.doc(docId);
 
     Map<String, dynamic> data = <String, dynamic>{
-      "employee_name": name,
-      "position": position,
-      "contact_no": contactno
+      "nama": nama,
+      "status": status
     };
 
     await documentReferencer.update(data).whenComplete(() {
       response.code = 200;
-      response.message = "Sucessfully updated Employee";
+      response.message = "Sucessfully updated proyek";
     }).catchError((e) {
       response.code = 500;
       response.message = e;

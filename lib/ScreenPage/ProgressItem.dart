@@ -29,14 +29,14 @@ class _ProgressItemState extends State<ProgressItem> {
                   child: Row(
                     children: [
                       Expanded(
-                          flex: 2,
+                          flex: 7,
                           child: Text(
                             widget.nama,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )),
                       Expanded(
                         child: SizedBox(),
-                        flex: 7,
+                        flex: 2,
                       ),
                       Expanded(
                           flex: 1,
