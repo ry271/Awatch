@@ -17,6 +17,7 @@ class _EditProgressState extends State<EditProgress> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _progressName = TextEditingController();
   String? _dropValue;
+  int _status = 2;
 
   @override
   void dispose() {
@@ -33,7 +34,13 @@ class _EditProgressState extends State<EditProgress> {
     document.get().then((value) {
       print(value["nama"]);
       _progressName.text = value['nama'];
-      _dropValue = value['status'];
+      _status = value['status'];
+
+      if (_status == 0) {
+        _dropValue = "Belum";
+      } else if (_status == 1) {
+        _dropValue = "Selesai";
+      }
       print(_dropValue);
     });
   }
@@ -41,6 +48,7 @@ class _EditProgressState extends State<EditProgress> {
   @override
   void initState() {
     getItem();
+    print(_dropValue);
     super.initState();
   }
 
@@ -75,14 +83,26 @@ class _EditProgressState extends State<EditProgress> {
                 Text("Status : "),
                 TextButton(
                   onPressed: () {
-                    print(_dropValue);
+                    print(_status);
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Status saat ini = $_dropValue"),
+                      behavior: SnackBarBehavior.floating,
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height - 80,
+                          right: 20,
+                          left: 20),
+                    ));
                   },
                   style: TextButton.styleFrom(
                       fixedSize: const Size(150, 48),
                       primary: Colors.white,
                       elevation: 3,
                       backgroundColor: Colors.deepOrangeAccent),
-                  child: Text("Update Progress"),
+                  child: Text("Lihat Status"),
+                ),
+                SizedBox(
+                  width: 20,
                 ),
                 DropdownButton(
                   value: _dropValue,
@@ -93,42 +113,83 @@ class _EditProgressState extends State<EditProgress> {
                       child: Text(value),
                     );
                   }).toList(),
-                  // Step 5.
                   onChanged: (String? newValue) {
                     setState(() {
                       _dropValue = newValue!;
+                      if (_dropValue == "Belum") {
+                        _status = 0;
+                      } else if (_dropValue == "Selesai") {
+                        _status = 1;
+                      }
                     });
                   },
                 ),
               ],
             ),
             SizedBox(height: 20.0),
-            TextButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  var response = await FirestoreSystem.updateProgress(
-                      nama: _progressName.text,
-                      status: _dropValue!,
-                      docId: widget.docId,
-                      progId: widget.progId);
-                  if (response != 200) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(response.message.toString()),
-                    ));
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(response.message.toString()),
-                    ));
-                  }
-                }
-              },
-              style: TextButton.styleFrom(
-                  fixedSize: const Size(150, 48),
-                  primary: Colors.white,
-                  elevation: 3,
-                  backgroundColor: Colors.deepOrangeAccent),
-              child: Text("Update Progress"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      var response = await FirestoreSystem.deleteProgress(
+                          docId: widget.docId, progId: widget.progId);
+                      if (response != 200) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(response.message.toString()),
+                        ));
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(response.message.toString()),
+                        ));
+                      }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                      fixedSize: const Size(150, 48),
+                      primary: Colors.white,
+                      elevation: 3,
+                      backgroundColor: Colors.deepOrangeAccent),
+                  child: Text("Hapus Progress"),
+                ),
+                SizedBox(width: 20.0),
+                TextButton(
+                  onPressed: () async {
+                    if (_progressName.text.isEmpty || _status.toInt() == 2) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Nama Progress/Status masih kosong!"),
+                      ));
+                      print("kosong");
+                    } else {
+                      if (_formKey.currentState!.validate()) {
+                        var response = await FirestoreSystem.updateProgress(
+                            nama: _progressName.text,
+                            status: _status!,
+                            docId: widget.docId,
+                            progId: widget.progId);
+                        if (response != 200) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(response.message.toString()),
+                          ));
+                          Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(response.message.toString()),
+                          ));
+                        }
+                      }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                      fixedSize: const Size(150, 48),
+                      primary: Colors.white,
+                      elevation: 3,
+                      backgroundColor: Colors.deepOrangeAccent),
+                  child: Text("Update Progress"),
+                ),
+              ],
             ),
           ],
         ),

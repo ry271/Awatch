@@ -52,9 +52,17 @@ class FirestoreSystem {
     return notesItemCollection.snapshots();
   }
 
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getProgressItem(
+      {required String docId, required String progId}) {
+    DocumentReference<Map<String, dynamic>> notesItemCollection =
+        _Collection.doc(docId).collection('progress').doc(progId);
+    return notesItemCollection.snapshots();
+  }
+
   static Future<Response> addProgress(
       {required String nama,
-      required String status,
+      required String imageUrl,
+      required int status,
       required String docId}) async {
     Response response = Response();
     DocumentReference documentReference =
@@ -62,7 +70,8 @@ class FirestoreSystem {
 
     Map<String, dynamic> data = <String, dynamic>{
       "nama": nama,
-      "status": status
+      "status": status,
+      "imageUrl": imageUrl
     };
 
     var result = await documentReference.set(data).whenComplete(() {
@@ -77,7 +86,7 @@ class FirestoreSystem {
 
   static Future<Response> updateProgress(
       {required String nama,
-      required String status,
+      required int status,
       required String docId,
       required String progId}) async {
     Response response = Response();
@@ -90,6 +99,32 @@ class FirestoreSystem {
     };
 
     var result = await documentReference.set(data).whenComplete(() {
+      response.code = 200;
+      response.message = "Sucessfully update progress to database";
+    }).catchError((e) {
+      response.code = 500;
+      response.message = e;
+    });
+    return response;
+  }
+
+  static Future<Response> uploadImage(
+      {required String nama,
+      required int status,
+      required String docId,
+      required String progId,
+      required String imageUrl}) async {
+    Response response = Response();
+    DocumentReference documentReference =
+        _Collection.doc(docId).collection('progress').doc(progId);
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "nama": nama,
+      "status": status,
+      "imageUrl": imageUrl
+    };
+
+    await documentReference.set(data).whenComplete(() {
       response.code = 200;
       response.message = "Sucessfully update progress to database";
     }).catchError((e) {
@@ -123,15 +158,16 @@ class FirestoreSystem {
     return response;
   }
 
-  static Future<Response> deleteProyek({
+  static Future<Response> deleteProgress({
     required String docId,
+    required String progId,
   }) async {
     Response response = Response();
-    DocumentReference documentReferencer = _Collection.doc(docId);
+    DocumentReference documentReferencer = _Collection.doc(docId).collection('progress').doc(progId);
 
     await documentReferencer.delete().whenComplete(() {
       response.code = 200;
-      response.message = "Sucessfully Deleted Employee";
+      response.message = "Sucessfully Deleted Progress";
     }).catchError((e) {
       response.code = 500;
       response.message = e;

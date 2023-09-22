@@ -52,8 +52,9 @@ class _AddProgressState extends State<AddProgress> {
                 if (_formKey.currentState!.validate()) {
                   var response = await FirestoreSystem.addProgress(
                       nama: _progressName.text,
-                      status: "Belum",
-                      docId: widget.docId);
+                      status: 0,
+                      docId: widget.docId,
+                      imageUrl: '');
                   if (response != 200) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(response.message.toString()),

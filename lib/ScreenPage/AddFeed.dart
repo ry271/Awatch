@@ -1,12 +1,7 @@
-import 'dart:developer';
-
-import 'package:awatch/Utilities/ProyekModel.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../Utilities/FirestoreSystem.dart';
 import 'HomePage.dart';
-import 'UserPost.dart';
 
 class AddFeed extends StatefulWidget {
   @override
@@ -100,7 +95,7 @@ class _AddFeedState extends State<AddFeed> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(response.message.toString()),
             ));
-            Navigator.push(
+            Navigator.pop(
                 context, MaterialPageRoute(builder: (context) => HomePage()));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -1,4 +1,5 @@
 import 'package:awatch/ScreenPage/ProgressItem.dart';
+import 'package:awatch/ScreenPage/UploadImagePage.dart';
 import 'package:awatch/Utilities/FirestoreSystem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,13 +7,18 @@ import 'package:flutter/material.dart';
 import 'AddProgress.dart';
 import 'EditProgress.dart';
 import 'UserPost.dart';
+import 'ViewImagePage.dart';
 
 class FeedDetail extends StatefulWidget {
   String proyekId;
   String nama;
   int status;
 
-  FeedDetail({Key? key, required this.proyekId, required this.nama, required this.status})
+  FeedDetail(
+      {Key? key,
+      required this.proyekId,
+      required this.nama,
+      required this.status})
       : super(key: key);
 
   @override
@@ -24,7 +30,6 @@ class _FeedDetailState extends State<FeedDetail> {
 
   @override
   Widget build(BuildContext context) {
-
     Widget _showDetail = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -37,13 +42,18 @@ class _FeedDetailState extends State<FeedDetail> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => ViewImagePage(
+                                    proyekId: widget.proyekId)));
+                      },
                       style: TextButton.styleFrom(
                           fixedSize: const Size(150, 48),
                           primary: Colors.white,
                           elevation: 3,
-                          backgroundColor:
-                          Colors.deepOrangeAccent),
+                          backgroundColor: Colors.deepOrangeAccent),
                       child: Text("Lihat Foto"),
                     )
                   ],
@@ -53,33 +63,19 @@ class _FeedDetailState extends State<FeedDetail> {
                   children: [
                     TextButton(
                       onPressed: () async {
-                        var response =
-                        await FirestoreSystem.updateProyek(
-                            nama: widget.nama,
-                            status: 1,
-                            docId: widget.proyekId);
-                        if (response != 200) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(
-                            content: Text(
-                                response.message.toString()),
-                          ));
-                          Navigator.pop(context);
-                        } else {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(
-                            content: Text(
-                                response.message.toString()),
-                          ));
-                        }
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AddProgress(docId: widget.proyekId);
+                          },
+                        );
                       },
                       style: TextButton.styleFrom(
                           fixedSize: const Size(150, 48),
                           primary: Colors.white,
                           elevation: 3,
-                          backgroundColor:
-                          Colors.deepOrangeAccent),
-                      child: Text("Proyek Selesai"),
+                          backgroundColor: Colors.deepOrangeAccent),
+                      child: Text("Tambah Progress"),
                     ),
                   ],
                 )
@@ -94,13 +90,18 @@ class _FeedDetailState extends State<FeedDetail> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => UploadImagePage(
+                                    proyekId: widget.proyekId)));
+                      },
                       style: TextButton.styleFrom(
                           fixedSize: const Size(150, 48),
                           primary: Colors.white,
                           elevation: 3,
-                          backgroundColor:
-                          Colors.deepOrangeAccent),
+                          backgroundColor: Colors.deepOrangeAccent),
                       child: Text("Upload Foto"),
                     ),
                   ],
@@ -110,34 +111,28 @@ class _FeedDetailState extends State<FeedDetail> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        var response = await FirestoreSystem.updateProyek(
+                            nama: widget.nama,
+                            status: 1,
+                            docId: widget.proyekId);
+                        if (response != 200) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(response.message.toString()),
+                          ));
+                          Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(response.message.toString()),
+                          ));
+                        }
+                      },
                       style: TextButton.styleFrom(
                           fixedSize: const Size(150, 48),
                           primary: Colors.deepOrangeAccent,
                           elevation: 3,
                           backgroundColor: Colors.white),
-                      child: Text("Update Proyek"),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AddProgress(
-                                docId: widget.proyekId);
-                          },
-                        );
-                      },
-                      child: Text(
-                        "Tambah Progress",
-                        style: TextStyle(
-                            color: Colors.deepOrangeAccent,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      child: Text("Proyek Selesai"),
                     )
                   ],
                 ),
@@ -150,23 +145,26 @@ class _FeedDetailState extends State<FeedDetail> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (builder) => ViewImagePage(
+                        proyekId: widget.proyekId)));
+          },
           style: TextButton.styleFrom(
               fixedSize: const Size(150, 48),
               primary: Colors.white,
               elevation: 3,
-              backgroundColor:
-              Colors.deepOrangeAccent),
+              backgroundColor: Colors.deepOrangeAccent),
           child: Text("Lihat Foto"),
         )
       ],
     );
 
     Widget _stream = StreamBuilder(
-      stream:
-      FirestoreSystem.readProgress(docId: widget.proyekId),
-      builder: (BuildContext context,
-          AsyncSnapshot<QuerySnapshot> snapshot) {
+      stream: FirestoreSystem.readProgress(docId: widget.proyekId),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
             itemCount: snapshot.data!.docs.length,
@@ -179,8 +177,7 @@ class _FeedDetailState extends State<FeedDetail> {
                     context: context,
                     builder: (context) {
                       return EditProgress(
-                          docId: widget.proyekId,
-                          progId: data.id);
+                          docId: widget.proyekId, progId: data.id);
                     },
                   );
                   print("nama : ${data['nama']}");
@@ -202,10 +199,8 @@ class _FeedDetailState extends State<FeedDetail> {
     );
 
     Widget _streamHistory = StreamBuilder(
-      stream:
-      FirestoreSystem.readProgress(docId: widget.proyekId),
-      builder: (BuildContext context,
-          AsyncSnapshot<QuerySnapshot> snapshot) {
+      stream: FirestoreSystem.readProgress(docId: widget.proyekId),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
             itemCount: snapshot.data!.docs.length,
@@ -229,24 +224,22 @@ class _FeedDetailState extends State<FeedDetail> {
     );
 
     Widget _statusStream() {
-      if(widget.status == 0) {
+      if (widget.status == 0) {
         return _stream;
-      } else if(widget.status == 1) {
+      } else if (widget.status == 1) {
         return _streamHistory;
       }
       return Container();
-
     }
 
     Widget _statusPage() {
-      if(widget.status == 0) {
+      if (widget.status == 0) {
         return _showDetail;
-      } else if(widget.status == 1) {
+      } else if (widget.status == 1) {
         return _showDetailHistory;
       }
       return Container();
     }
-
 
     return MaterialApp(
         home: Scaffold(
@@ -272,12 +265,8 @@ class _FeedDetailState extends State<FeedDetail> {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                    flex: 7,
-                    child: _statusStream()),
-                Expanded(
-                    flex: 3,
-                    child: _statusPage())
+                Expanded(flex: 7, child: _statusStream()),
+                Expanded(flex: 3, child: _statusPage())
               ],
             )));
   }
