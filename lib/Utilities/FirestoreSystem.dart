@@ -28,7 +28,7 @@ class FirestoreSystem {
       response.message = "Sucessfully create proyek to database";
     }).catchError((e) {
       response.code = 500;
-      response.message = e;
+      response.message = e.toString();
     });
     return response;
   }
