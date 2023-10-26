@@ -6,8 +6,68 @@ import 'Response.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final CollectionReference _Collection = _firestore.collection('proyek');
+final CollectionReference _CollectionUsers = _firestore.collection('users');
 
 class FirestoreSystem {
+
+  static Future<Response> addUser(
+      {required String nama,
+        required String jabatan,
+        required String telepon,
+        required String uid}) async {
+    Response response = Response();
+    DocumentReference documentReference = _CollectionUsers.doc(uid);
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "nama": nama,
+      "jabatan": jabatan,
+      "telepon": telepon
+    };
+
+    print("hai ${documentReference.id}");
+
+    await documentReference.set(data).whenComplete(() {
+      response.code = 200;
+      response.message = "Sucessfully create proyek to database";
+    }).catchError((e) {
+      response.code = 500;
+      response.message = e.toString();
+    });
+    return response;
+  }
+
+  // static Stream<DocumentSnapshot<Map<String, dynamic>>> getProfileItem(
+  //     {required String UID) {
+  //   DocumentReference<Map<String, dynamic>> notesItemCollection =
+  //   _CollectionUsers.doc(UID).get();
+  //   return notesItemCollection.snapshots();
+  // }
+
+  static Future<Response> updateProfile(
+      {required String nama,
+        required String jabatan,
+        required String telepon,
+        required String UID}) async {
+    Response response = Response();
+    DocumentReference documentReferencer = _CollectionUsers.doc(UID);
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "nama": nama,
+      "jabatan": jabatan,
+      "telepon": telepon,
+    };
+
+    await documentReferencer.update(data).whenComplete(() {
+      response.code = 200;
+      response.message = "Update Success";
+    }).catchError((e) {
+      response.code = 500;
+      response.message = e;
+    });
+
+    return response;
+  }
+
   static Future<Response> addProyek(
       {required String nama,
       required String alamat,

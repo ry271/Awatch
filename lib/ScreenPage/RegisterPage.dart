@@ -1,45 +1,23 @@
-import 'package:awatch/ScreenPage/RegisterPage.dart';
+import 'package:awatch/ScreenPage/LoginPage.dart';
+import 'package:awatch/Utilities/AuthServices.dart';
+import 'package:awatch/Utilities/CustomColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Utilities/AuthServices.dart';
-import '../Utilities/CustomColors.dart';
-import 'HomePage.dart';
+import 'RegisterPage.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final usernameController = TextEditingController();
+class _RegisterPageState extends State<RegisterPage> {
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  late SharedPreferences prefs;
-  late bool newuser;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    checkLogin();
-  }
-
-  void checkLogin() async {
-    prefs = await SharedPreferences.getInstance();
-    newuser = (prefs.getBool('login') ?? true);
-    print(newuser);
-    if (newuser == false) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
-    }
-  }
-
-  @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -54,11 +32,10 @@ class _LoginPageState extends State<LoginPage> {
           alignment: Alignment.centerLeft,
           height: 60.0,
           child: TextField(
-            controller: usernameController,
+            controller: emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.black,
-              // backgroundColor:
             ),
             decoration: const InputDecoration(
                 contentPadding: EdgeInsets.only(top: 14.0),
@@ -113,46 +90,33 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _LoginBtn() {
+  Widget _SignupBtn() {
     return Container(
-      // margin: EdgeInsets.only(left: MediaQuery.of(context).size.width / 3),
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 5.0,
-          padding: EdgeInsets.all(15.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0.0),
-          ),
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
         onPressed: () async {
-          prefs = await SharedPreferences.getInstance();
-          String username = usernameController.text;
+          String email = emailController.text;
           String password = passwordController.text;
 
           AuthService service = AuthService(FirebaseAuth.instance);
           final message =
-              await service.signIn(email: username, password: password);
-          final FirebaseAuth auth = FirebaseAuth.instance;
-          final cUser = auth.currentUser;
-          final uid = cUser?.uid;
-          // print(uid);
-          prefs.setString('userid', uid!);
-          // print('asdasd: ${prefs.getString('userid')}');
+          await service.signUp(email: email, password: password);
+
           if (message!.contains('Success')) {
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
           }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(message),
             ),
           );
         },
+        style: raisedButtonStyle,
         child: const Text(
-          'Login',
+          'Register',
           style: TextStyle(
             color: Colors.white,
             letterSpacing: 1.5,
@@ -164,18 +128,22 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+  final ButtonStyle raisedButtonStyle = TextButton.styleFrom(
+    padding: EdgeInsets.all(15.0),
+    backgroundColor: Colors.deepOrangeAccent,
+  );
 
-  Widget _SignupBtn() {
+  Widget _SigninBtn() {
     return GestureDetector(
       onTap: () => {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => RegisterPage()))
+        Navigator.pop(
+            context, MaterialPageRoute(builder: (context) => LoginPage()))
       },
       child: RichText(
         text: const TextSpan(
           children: [
             TextSpan(
-              text: 'Don\'t have an Account? ',
+              text: 'Already have an Account? ',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18.0,
@@ -183,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             TextSpan(
-              text: 'Register',
+              text: 'Login',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18.0,
@@ -202,49 +170,53 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(),
-                ),
-                Expanded(
-                  flex: 8,
-                  child: Container(
-                    child: SingleChildScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 40.0,
-                        vertical: 21.0,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'AWATCH',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'OpenSans',
-                              fontSize: 35.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 2,
+                child: SizedBox(),
+              ),
+              Expanded(
+                flex: 8,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white),
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 40.0,
+                      vertical: 21.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Register',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'OpenSans',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
                           ),
-                          SizedBox(height: 90.0),
-                          _emailItem(),
-                          SizedBox(
-                            height: 30.0,
-                          ),
-                          _passwordItem(),
-                          _LoginBtn(),
-                          _SignupBtn()
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 30.0),
+                        _emailItem(),
+                        SizedBox(
+                          height: 30.0,
+                        ),
+                        _passwordItem(),
+                        // _ForgotPasswordBtn(),
+                        _SignupBtn(),
+                        _SigninBtn(),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            )),
+              ),
+            ],
+          )
+        ),
       ),
     );
   }

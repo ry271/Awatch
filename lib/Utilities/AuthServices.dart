@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'FirestoreSystem.dart';
+
 class AuthService {
   final FirebaseAuth _firebaseAuth;
 
@@ -11,7 +13,11 @@ class AuthService {
       {required String email, required String password}) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+          email: email, password: password).then((value) => FirestoreSystem.addUser(
+          nama: "User1",
+          jabatan: "Jabatan1",
+          telepon: "telepon1",
+          uid: value.user!.uid));
       return 'Success';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

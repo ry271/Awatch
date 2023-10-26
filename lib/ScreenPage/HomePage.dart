@@ -12,6 +12,7 @@ import '../Utilities/AuthServices.dart';
 import 'AddFeed.dart';
 import 'FeedDetail.dart';
 import 'HistoryPage.dart';
+import 'ProfilePage.dart';
 import 'StaticFeedItem.dart';
 import 'UserPost.dart';
 
@@ -25,9 +26,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   SharedPreferences? prefs;
   bool? log;
+  int _selectedIndex = 0;
 
-  final Stream<QuerySnapshot> collectionReference = FirestoreSystem
-      .readProyek();
+  final Stream<QuerySnapshot> collectionReference =
+      FirestoreSystem.readProyek();
 
   @override
   void initState() {
@@ -36,6 +38,11 @@ class _HomePageState extends State<HomePage> {
     // initial();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +78,60 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                child: Text("Awatch"),
+                decoration: BoxDecoration(color: Colors.deepOrangeAccent),
+              ),
+              ListTile(
+                title: Text("Testing"),
+                onTap: () {
+                  print(_firebaseAuth.currentUser!.uid);
+                },
+              ),
+              ListTile(
+                title: Text("Profile"),
+                onTap: () {
+                  var collection = FirebaseFirestore.instance.collection('users');
+                  collection.doc(_firebaseAuth.currentUser!.uid).snapshots().listen((docSnapshot) {
+                    if (docSnapshot.exists) {
+                      Map<String, dynamic> data = docSnapshot.data()!;
+                      // You can then retrieve the value from the Map like this:
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage(
+                                  UID: _firebaseAuth.currentUser!.uid,
+                                  nama: data["nama"],
+                                  jabatan: data["jabatan"],
+                                  telepon: data["telepon"])));
+                    }
+                    else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage(
+                                  UID: "UID",
+                                  nama: 'nama',
+                                  jabatan: "jabatan",
+                                  telepon: "telepon")));
+                    }
+                  });
+                },
+              )
+            ],
+          ),
+        ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepOrangeAccent,
           child: Icon(CupertinoIcons.plus),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => AddFeed()),
+              MaterialPageRoute(builder: (context) => AddFeed()),
             );
           },
         ),
@@ -91,30 +144,29 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(right: 20),
               child: TextButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HistoryPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HistoryPage()));
                   },
                   child: Text('Riwayat Proyek'),
                   style: TextButton.styleFrom(
                       fixedSize: const Size(150, 48),
                       primary: Colors.white,
-                      backgroundColor: Colors.deepOrangeAccent)
-              ),
+                      backgroundColor: Colors.deepOrangeAccent)),
             ),
             SizedBox(height: 20),
             StreamBuilder(
               stream: FirestoreSystem.readProyek(),
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   return ListView.separated(
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (BuildContext, index) {
                       var data = snapshot.data!.docs[index];
                       return GestureDetector(
-                        child: StaticFeedItem(nama: data['nama'],),
+                        child: StaticFeedItem(
+                          nama: data['nama'],
+                        ),
                         onTap: () async {
                           prefs = await SharedPreferences.getInstance();
                           print("nama : ${data['nama']}");
@@ -124,8 +176,11 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      FeedDetail(proyekId: data.id, nama: data['nama'], status: data['status'],)));
+                                  builder: (context) => FeedDetail(
+                                        proyekId: data.id,
+                                        nama: data['nama'],
+                                        status: data['status'],
+                                      )));
                         },
                       );
                     },
