@@ -1,16 +1,16 @@
-# awatch
+# Flutter Project (AWATCH)
 
-A new Flutter project.
+Flutter Project (AWATCH) - A simple Project Monitoring app. This project provides simple UI and easy to use by customer. 
 
-## Getting Started
+The app has basic login and signup screens, project lists, project details, and project history. It only support android device for now. 
 
-This project is a starting point for a Flutter application.
+It's configured with [Firebase](https://firebase.google.com/) for Backend-as-a-Service(BaaS).
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<br />
+<div>
+  &emsp;&emsp;&emsp;
+  <img src="https://github.com/ry271/Awatch/blob/main/img/Screenshot_2024-02-15-11-16-19-832_id.rain.awatch.awatch.jpg" alt="Light theme" width="330">
+  &emsp;&emsp;&emsp;&emsp;
+  <img src="https://github.com/ry271/Awatch/blob/main/img/Screenshot_2024-02-15-11-16-31-447_id.rain.awatch.awatch.jpg" alt="Dark theme" width="320">  
+</div>
+<br />
