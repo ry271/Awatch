@@ -1,10 +1,11 @@
 # Flutter Project (AWATCH)
 
 Flutter Project (AWATCH) - A simple Project Monitoring app. This project provides simple UI and easy to use by customer. 
+<h3>This project was built to fulfill the courses of Mobile Programming, Software Engineering, Software Design, Software Project Management, and Software Quality Assurance.</h3>
 
-The app has basic login and signup screens, project lists, project details, and project history. It only support android device for now. 
+The app has basic login and signup screens, CRUD project, project lists, project details, and project history. It only support android device for now. 
 
-It's configured with [Firebase](https://firebase.google.com/) for Backend-as-a-Service(BaaS).
+It's currently configured with [Firebase](https://firebase.google.com/) as Backend-as-a-Service(BaaS).
 
 <br />
 <div>
